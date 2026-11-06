@@ -7,7 +7,7 @@ README
 --Use a subquery to find the albums belonging to the specified artist.
 --The outer query retrieves all tracks whose AlbumId matches those albums.
 
-'''sql
+```sql
 SELECT *
 FROM Track
 WHERE Album_id IN (
@@ -15,7 +15,7 @@ WHERE Album_id IN (
     FROM Album
     WHERE Artist_id = 1
 );
-'''
+```
 
 # Question 2: Chained CTEs
 ## Business question:
@@ -26,7 +26,7 @@ WHERE Album_id IN (
 -- The second CTE ranks the artists by revenue, and the final query
 -- returns the artist or artists with the highest revenue.
 
-'''sql
+```sql
 WITH artist_revenue AS (
     SELECT
         ar.artist_id,
@@ -57,7 +57,7 @@ SELECT
     total_revenue
 FROM rank_artist
 WHERE revenue_rank = 1;
-'''
+```
 
 # Question 3: Ranking the top 3 products in each category
 
@@ -68,7 +68,7 @@ WHERE revenue_rank = 1;
 -- Calculate the total quantity sold for each track and identify its genre.
 -- Rank the tracks within each genre, then return those ranked 1, 2, or 3.
 
-'''sql
+```sql
 WITH track_sales AS (
     SELECT
         t.Name AS track_name,
@@ -95,7 +95,7 @@ ranked_track AS (
 SELECT *
 FROM ranked_track
 WHERE ranked_quantity IN (1, 2, 3);
-'''
+```
 
 # Question 4: Using ROW_NUMBER() to deduplicate records
 
@@ -107,7 +107,7 @@ WHERE ranked_quantity IN (1, 2, 3);
 -- Use ROW_NUMBER() to assign sequential numbers to customers
 -- sharing the same email, then keep only the first record.
 
-'''sql
+```sql
 WITH customer_records AS (
     SELECT
         customer_id,
@@ -123,7 +123,7 @@ WITH customer_records AS (
 SELECT *
 FROM customer_records
 WHERE ranked_customer = 1;
-'''
+```
 
 # Question 5: Using LAG() to compare monthly revenue
 ## Business question:
@@ -135,7 +135,7 @@ WHERE ranked_customer = 1;
 -- Then use LAG() to retrieve the previous month's revenue
 -- and calculate the difference between both months.
 
-'''sql
+```sql
 WITH monthly_revenue AS (
     SELECT
         TO_CHAR(invoice_date, 'YYYY-MM') AS sales_month,
@@ -159,7 +159,7 @@ SELECT
     sales_revenue - previous_revenue AS revenue_difference
 FROM revenue_comparison
 ORDER BY sales_month ASC;
-'''
+```
 
 # Question 6: Using CASE WHEN to create a segment column
 
@@ -171,7 +171,7 @@ ORDER BY sales_month ASC;
 -- Calculate each customer's total spending.
 -- Use CASE WHEN to assign a spending segment.
 
-'''sql
+```sql
 SELECT
     c.first_name,
     c.last_name,
@@ -188,7 +188,7 @@ GROUP BY
     c.customer_id,
     c.first_name,
     c.last_name;
-'''
+```
 
 # Question 7: Calculating a running total
 
@@ -200,7 +200,7 @@ GROUP BY
 -- Then use SUM() OVER (ORDER BY sales_month) to calculate
 -- the cumulative revenue across the months.
 
-'''sql
+```sql
 WITH month_revenue AS (
     SELECT
         TO_CHAR(invoice_date, 'YYYY-MM') AS sales_month,
@@ -214,7 +214,7 @@ SELECT
         ORDER BY sales_month
     ) AS running_total
 FROM month_revenue;
-'''
+```
 
 # Question 8: Rewriting a complex subquery as a CTE
 
@@ -226,7 +226,7 @@ FROM month_revenue;
 -- Calculate the average spending across all customers.
 -- Filter customers whose spending exceeds that average.
 
-'''sql
+```sql
 WITH sales_revenue AS (
     SELECT
         c.customer_id,
@@ -250,4 +250,4 @@ customer_average AS (
 SELECT *
 FROM customer_average
 WHERE total_revenue > average_revenue;
-'''
+```
