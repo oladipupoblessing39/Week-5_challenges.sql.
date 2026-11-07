@@ -211,6 +211,8 @@ FROM month_revenue;
 ## Approach:
 -- Calculate each customer's total spending. Calculate the average spending across all customers. Filter customers whose spending exceeds that average.
 
+## Using a CTE
+
 ```sql
 WITH sales_revenue AS (
     SELECT
@@ -236,3 +238,34 @@ SELECT *
 FROM customer_average
 WHERE total_revenue > average_revenue;
 ```
+
+## Using a subquery 
+
+```sql
+SELECT *
+FROM (
+    SELECT
+        c.customer_id,
+        c.first_name,
+        c.last_name,
+        SUM(i.total) AS total_revenue
+    FROM customer c
+    JOIN invoice i
+        ON c.customer_id = i.customer_id
+    GROUP BY
+        c.customer_id,
+        c.first_name,
+        c.last_name
+) AS sales_revenue
+WHERE total_revenue > (
+    SELECT AVG(customer_total)
+    FROM (
+        SELECT
+            SUM(total) AS customer_total
+        FROM invoice
+        GROUP BY customer_id
+    ) AS customer_spending
+);
+```
+
+My preference is the CTE version because it separates the calculations into named steps. This makes the query easier to read and understand. The subquery version also works, but hard to follow. 
